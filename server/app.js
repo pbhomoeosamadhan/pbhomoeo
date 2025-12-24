@@ -30,7 +30,6 @@ mongoose
   })
   .catch((error) => {
     console.error("MongoDB connection failed:", error.message);
-    process.exit(1);
   });
 
 app.get("/", (req, res) => {
