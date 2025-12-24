@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+body {
+  background-color: #fcfbfc;
+}
+
+.input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
