@@ -8,6 +8,7 @@ import {
   updatePatient,
 } from "../store/slice/patientsSlice";
 import { fetchDoctors } from "../store/slice/doctorSlice";
+import { createSerial, getSerials } from "../store/slice/serialSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -27,6 +28,10 @@ import {
   FiFileText,
   FiPhone,
   FiHash,
+  FiImage,
+  FiExternalLink,
+  FiUpload,
+  FiRefreshCw,
 } from "react-icons/fi";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import AddVisitModal from "../components/AddVisitModal";
@@ -391,6 +396,7 @@ const Serial = () => {
 
   const { patients = [], isLoading } = useSelector((state) => state.patient);
   const { doctors = [] } = useSelector((state) => state.doctor);
+  const { serials, loading, error } = useSelector((state) => state.serial);
   const [isVisitModalOpen, setVisitModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isSymptomsModalOpen, setSymptomsModalOpen] = useState(false);
@@ -400,9 +406,11 @@ const Serial = () => {
   const [editingVisitId, setEditingVisitId] = useState(null);
   const [selectedVisit, setSelectedVisit] = useState(null);
   const [activeTab, setActiveTab] = useState("visits"); // "visits" or "history"
+  const [file, setFile] = useState(null);
 
   useEffect(() => {
     dispatch(fetchDoctors());
+    dispatch(getSerials());
   }, [dispatch]);
 
   const medicalName =
@@ -527,6 +535,28 @@ const Serial = () => {
     setSelectedVisit(visit);
   };
 
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleImageSubmit = async (e) => {
+    e.preventDefault();
+    if (!file) {
+      toast.error("Please select an image");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("photo", file);
+    formData.append("pId", patient._id);
+    try {
+      await dispatch(createSerial(formData)).unwrap();
+      toast.success("Image uploaded successfully");
+      setFile(null);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
@@ -569,6 +599,9 @@ const Serial = () => {
 
   const { history = {}, visits = [], medicalHistory = [] } = patient;
   const doctor = doctors[0] || {};
+  const patientSerials = serials?.filter(
+    (serial) => serial.pId?.toString() === patient._id
+  );
 
   return (
     <div className="flex-1 bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
@@ -676,9 +709,150 @@ const Serial = () => {
                 </div>
               )}
             </div>
+            {/* =====================================================///////////////////======================= */}
 
+            <div className="space-y-6 order-3">
+              <InfoCard title="Patient Images" icon={<FiImage />}>
+                <div className="space-y-4">
+                  {/* Image Upload Form */}
+                  <form onSubmit={handleImageSubmit} className="space-y-4">
+                    <label
+                      htmlFor="image-upload"
+                      className="block border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-400 transition-colors duration-300 cursor-pointer"
+                    >
+                      <div className="flex flex-col items-center justify-center">
+                        <FiUpload className="h-12 w-12 text-gray-400 mb-4" />
+                        <p className="text-gray-600 font-medium mb-2">
+                          Click to upload or drag & drop
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          PNG, JPG, GIF up to 5MB
+                        </p>
+                      </div>
+                      <input
+                        type="file"
+                        onChange={handleFileChange}
+                        accept="image/*"
+                        className="hidden"
+                        id="image-upload"
+                      />
+                    </label>
+                    {file && (
+                      <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <FiImage className="h-6 w-6 text-green-600" />
+                            <div>
+                              <p className="text-sm font-medium text-green-800">
+                                Selected File
+                              </p>
+                              <p className="text-xs text-green-600 truncate max-w-[200px]">
+                                {file.name}
+                              </p>
+                            </div>
+                          </div>
+                          <span className="text-xs font-medium text-green-700">
+                            {(file.size / 1024 / 1024).toFixed(2)} MB
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={!file}
+                      className={`w-full py-3 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
+                        file
+                          ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:from-blue-600 hover:to-cyan-600 shadow hover:shadow-md"
+                          : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      }`}
+                    >
+                      <FiUpload /> {loading ? "Uploading..." : "Upload Image"}
+                    </button>
+                  </form>
+
+                  {/* Image Gallery */}
+                  <div>
+                    <div className="flex justify-between items-center mb-3 pb-2 border-b">
+                      <h4 className="font-semibold text-gray-700">
+                        Uploaded Images ({patientSerials?.length || 0})
+                      </h4>
+                      {patientSerials?.length > 0 && (
+                        <button
+                          onClick={() => dispatch(getSerials())}
+                          className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                        >
+                          <FiRefreshCw className="h-3 w-3" /> Refresh
+                        </button>
+                      )}
+                    </div>
+                    {patientSerials?.length > 0 ? (
+                      <div className="grid grid-cols-2 gap-4">
+                        {patientSerials.map((serial) => (
+                          <div
+                            key={serial._id}
+                            className="group relative overflow-hidden rounded-xl border border-gray-200 hover:border-blue-300 transition-all duration-300 hover:shadow-lg"
+                          >
+                            <div className="aspect-square overflow-hidden bg-gray-100">
+                              <img
+                                src={serial.image?.url}
+                                alt={`Patient image ${serial._id}`}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src =
+                                    "https://via.placeholder.com/300x300?text=Image+Error";
+                                }}
+                              />
+                            </div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                              <div className="absolute bottom-2 left-3 right-3">
+                                <p className="text-white text-xs">
+                                  Uploaded:{" "}
+                                  {new Date(
+                                    serial.createdAt
+                                  ).toLocaleDateString()}
+                                </p>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() =>
+                                window.open(serial.image?.url, "_blank")
+                              }
+                              className="absolute top-2 right-2 p-1.5 bg-white/90 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-white"
+                              title="View Full Size"
+                            >
+                              <FiExternalLink className="h-4 w-4 text-gray-700" />
+                            </button>
+                            <div className="absolute top-2 left-2">
+                              <span className="px-2 py-1 bg-black/70 text-white text-xs rounded-full">
+                                #{serial._id.slice(-4)}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                          <FiImage className="h-8 w-8 text-gray-400" />
+                        </div>
+                        <p className="text-gray-500 font-medium">
+                          No images uploaded yet
+                        </p>
+                        <p className="text-sm text-gray-400 mt-1">
+                          Upload patient images or documents
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </InfoCard>
+            </div>
+
+            {/* =====================================================///////////////////======================= */}
             {/* Sidebar */}
-            <div className="space-y-6">
+            <div className="space-y-6 order-2">
               <VisitHistory
                 visits={visits}
                 onAddVisit={() => setVisitModalOpen(true)}

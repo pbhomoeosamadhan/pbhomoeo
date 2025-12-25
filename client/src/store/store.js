@@ -4,6 +4,7 @@ import catagoryReducer from "./slice/catagorySlice";
 import doctorReducer from "./slice/doctorSlice";
 import accountingReducer from "./slice/accountingSlice";
 import historyReducer from "./slice/historySlice";
+import serialReducer from "./slice/serialSlice";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     doctor: doctorReducer,
     accounting: accountingReducer,
     history: historyReducer,
+    serial: serialReducer,
   },
 });
 
