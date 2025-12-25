@@ -45,6 +45,13 @@ mongoose
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
+
+app.use(
+  fileUpload({
+    useTempFiles: false, // 🔥 IMPORTANT
+    limits: { fileSize: 5 * 1024 * 1024 }, // optional
+  })
+);
 app.use("/doctors", doctorRoute);
 app.use("/patients", patientRoute);
 app.use("/catagory", catagoryRoute);
