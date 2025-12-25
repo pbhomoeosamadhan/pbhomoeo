@@ -21,9 +21,12 @@ const createSerial = async (req, res) => {
     const { pId } = req.body;
     const file = req.files.photo;
 
-    const uploadPath = path.resolve(file.tempFilePath);
+    // 🔥 Convert buffer to base64
+    const base64Image = `data:${file.mimetype};base64,${file.data.toString(
+      "base64"
+    )}`;
 
-    const result = await cloudinary.uploader.upload(uploadPath, {
+    const result = await cloudinary.uploader.upload(base64Image, {
       folder: "serials",
     });
 
