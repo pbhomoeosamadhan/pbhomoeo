@@ -11,11 +11,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 export const createSerial = createAsyncThunk(
   "serial/createSerial",
   async (data) => {
-    const response = await axios.post(`${BASE_URL}/serial`, data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await axios.post(`${BASE_URL}/serial`, data);
     return response.data;
   }
 );
