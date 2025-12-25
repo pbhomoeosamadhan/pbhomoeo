@@ -7,8 +7,6 @@ cloudinary.config({
   api_secret: process.env.API_SECRET,
 });
 
-const path = require("path");
-
 const createSerial = async (req, res) => {
   try {
     if (!req.files || !req.files.photo) {
