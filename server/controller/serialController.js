@@ -9,7 +9,7 @@ cloudinary.config({
 
 const createSerial = async (req, res) => {
   try {
-    if (!req.files || !req.files.photo) {
+    if (!req.file) {
       return res.status(400).json({
         status: "fail",
         message: "No image uploaded",
@@ -17,10 +17,10 @@ const createSerial = async (req, res) => {
     }
 
     const { pId } = req.body;
-    const file = req.files.photo;
+    const file = req.file;
 
     // 🔥 Convert buffer to base64
-    const base64Image = `data:${file.mimetype};base64,${file.data.toString(
+    const base64Image = `data:${file.mimetype};base64,${file.buffer.toString(
       "base64"
     )}`;
 
