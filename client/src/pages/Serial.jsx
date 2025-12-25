@@ -241,7 +241,7 @@ const VisitAccordion = ({ visit, index, handleEdit, onPrint }) => {
               <div className="space-y-3">
                 <div>
                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                    Condition
+                    C/c
                   </p>
                   <p className="font-medium text-gray-800 mt-1">
                     {visit.condition || "Not specified"}
