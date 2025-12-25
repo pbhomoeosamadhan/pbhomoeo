@@ -14,9 +14,8 @@ const historyRoute = require("./router/historyRoute");
 const serialRoute = require("./router/serialRoute");
 
 app.use(cors("*"));
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
-
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
