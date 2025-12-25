@@ -64,4 +64,35 @@ const getSerials = async (req, res) => {
   }
 };
 
-module.exports = { createSerial, getSerials };
+const deleteSerial = async (req, res) => {
+  try {
+    const serial = await serialModel.findById(req.params.id);
+    if (!serial) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Serial not found",
+      });
+    }
+
+    // Delete image from Cloudinary
+    await cloudinary.uploader.destroy(serial.image.public_id);
+
+    // Delete serial from database
+    await serial.remove();
+
+    res.status(200).json({
+      status: "success",
+      message: "Serial deleted successfully",
+    });
+  } catch (error) {
+    console.error("Serial Delete Error:", error);
+    res.status(500).json({
+      status: "fail",
+      message: error.message,
+    });
+  }
+};
+
+
+module.exports = { createSerial, getSerials, deleteSerial };
+

@@ -8,7 +8,11 @@ import {
   updatePatient,
 } from "../store/slice/patientsSlice";
 import { fetchDoctors } from "../store/slice/doctorSlice";
-import { createSerial, getSerials } from "../store/slice/serialSlice";
+import {
+  createSerial,
+  getSerials,
+  deleteSerial,
+} from "../store/slice/serialSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -557,6 +561,17 @@ const Serial = () => {
     }
   };
 
+  const handleDeleteImage = async (id) => {
+    if (window.confirm("Are you sure you want to delete this image?")) {
+      try {
+        await dispatch(deleteSerial(id)).unwrap();
+        toast.success("Image deleted successfully");
+      } catch (error) {
+        toast.error(error.message);
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
@@ -823,6 +838,13 @@ const Serial = () => {
                               title="View Full Size"
                             >
                               <FiExternalLink className="h-4 w-4 text-gray-700" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteImage(serial._id)}
+                              className="absolute bottom-2 right-2 p-1.5 bg-red-500/90 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-red-500"
+                              title="Delete Image"
+                            >
+                              <FiTrash2 className="h-4 w-4 text-white" />
                             </button>
                             <div className="absolute top-2 left-2">
                               <span className="px-2 py-1 bg-black/70 text-white text-xs rounded-full">

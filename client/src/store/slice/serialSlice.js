@@ -21,6 +21,14 @@ export const getSerials = createAsyncThunk("serial/getSerials", async () => {
   return response.data;
 });
 
+export const deleteSerial = createAsyncThunk(
+  "serial/deleteSerial",
+  async (id) => {
+    await axios.delete(`${BASE_URL}/serial/${id}`);
+    return id;
+  }
+);
+
 const serialSlice = createSlice({
   name: "serial",
   initialState,
@@ -48,8 +56,22 @@ const serialSlice = createSlice({
       .addCase(getSerials.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(deleteSerial.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteSerial.fulfilled, (state, action) => {
+        state.loading = false;
+        state.serials = state.serials.filter(
+          (serial) => serial._id !== action.payload
+        );
+      })
+      .addCase(deleteSerial.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       });
   },
 });
 
 export default serialSlice.reducer;
+
