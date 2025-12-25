@@ -67,6 +67,7 @@ const getSerials = async (req, res) => {
 const deleteSerial = async (req, res) => {
   try {
     const serial = await serialModel.findById(req.params.id);
+
     if (!serial) {
       return res.status(404).json({
         status: "fail",
@@ -74,11 +75,13 @@ const deleteSerial = async (req, res) => {
       });
     }
 
-    // Delete image from Cloudinary
-    await cloudinary.uploader.destroy(serial.image.public_id);
+    // Cloudinary থেকে image delete করো (optional, কিন্তু recommended)
+    if (serial.image?.public_id) {
+      await cloudinary.uploader.destroy(serial.image.public_id);
+    }
 
-    // Delete serial from database
-    await serial.remove();
+    // DB থেকে delete করো (modern way)
+    await serialModel.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
       status: "success",
@@ -88,11 +91,9 @@ const deleteSerial = async (req, res) => {
     console.error("Serial Delete Error:", error);
     res.status(500).json({
       status: "fail",
-      message: error.message,
+      message: error.message || "Failed to delete serial",
     });
   }
 };
 
-
 module.exports = { createSerial, getSerials, deleteSerial };
-
