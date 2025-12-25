@@ -48,8 +48,8 @@ app.get("/", (req, res) => {
 
 app.use(
   fileUpload({
-    useTempFiles: false, // 🔥 IMPORTANT
-    limits: { fileSize: 5 * 1024 * 1024 }, // optional
+    useTempFiles: false,
+    limits: { fileSize: 5 * 1024 * 1024 },
   })
 );
 app.use("/doctors", doctorRoute);
