@@ -100,7 +100,7 @@ const Doctors = () => {
         </div>
 
         {/* Add Doctor Form */}
-        {doctors.length > 0 ? (
+        {doctors.length >= 2 ? (
           <></>
         ) : (
           <div className="bg-white shadow-lg rounded-2xl p-4 sm:p-6">

@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const patientSchema = new mongoose.Schema(
   {
+    patientChember: { type: mongoose.Schema.Types.ObjectId, ref: "doctor" },
     patientSerial: { type: Number, required: true },
     patientName: { type: String, required: true },
     patientAge: { type: Number, required: true },
@@ -34,7 +35,7 @@ const patientSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = patientSchema;

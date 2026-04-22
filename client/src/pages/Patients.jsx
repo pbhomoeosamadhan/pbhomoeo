@@ -1,31 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPatients } from "../store/slice/patientsSlice";
-import { fetchDoctors } from "../store/slice/doctorSlice";
+import { fetchPatientsByChember } from "../store/slice/patientsSlice";
 
 const Patients = () => {
+  const { chamId } = useParams();
   const dispatch = useDispatch();
-
-  const { doctors } = useSelector((state) => state.doctor);
-  useEffect(() => {
-    dispatch(fetchDoctors());
-  }, [dispatch]);
-
-  const medicalName = doctors.map((item) => item.medicalName);
-
+  console.log("chamId", chamId);
   const { patients, isLoading, isError } = useSelector(
-    (state) => state.patient
+    (state) => state.patient,
   );
 
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    dispatch(fetchPatients());
-  }, [dispatch]);
-
+    if (!chamId) return;
+    dispatch(fetchPatientsByChember(chamId));
+  }, [dispatch, chamId]);
+  console.log(patients);
   // 🔍 search filter logic
-  const filteredPatients = patients.filter((patient) => {
+  const filteredPatients = patients?.filter((patient) => {
     const searchText = search.trim().toLowerCase();
 
     return (
@@ -64,14 +58,6 @@ const Patients = () => {
   return (
     <div className="flex-1 p-4 sm:p-6 bg-gray-50 min-h-screen">
       <div className="bg-white shadow-lg rounded-2xl p-4 sm:p-6 space-y-4">
-        <div className="w-full flex flex-col items-center justify-center">
-          <Link to="/" className="text-3xl md:text-4xl font-bold text-gray-800">
-            {medicalName ? medicalName : "Mathura Homio Samadhan"}
-          </Link>
-          <p className="text-gray-600 mt-2">
-            হোমিও চিকিৎসা নিন-আস্থা রাখুন-সুস্থ থাকুন
-          </p>
-        </div>
         <div className="w-full flex flex-col sm:flex-row items-center gap-3">
           <input
             className="w-full sm:flex-1 px-4 py-2 text-gray-700 bg-gray-100 border-2 border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 transition"
@@ -82,7 +68,7 @@ const Patients = () => {
           />
 
           <Link
-            to="/form"
+            to="form"
             className="whitespace-nowrap px-4 py-2 bg-sky-500 text-white font-semibold rounded-lg shadow-md hover:bg-sky-600 transition-transform transform hover:scale-105"
           >
             Add Patient

@@ -15,7 +15,23 @@ export const fetchDoctors = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message);
     }
-  }
+  },
+);
+export const fetchDoctorsById = createAsyncThunk(
+  "doctors/fetchDoctorsById",
+  async (id, { rejectWithValue }) => {
+    try {
+      console.log(id);
+      const res = await fetch(`${BASE_URL}/doctors/${id}`);
+      if (!res.ok) {
+        const error = await res.json();
+        return rejectWithValue(error.message);
+      }
+      return res.json();
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
 );
 
 export const createDoctor = createAsyncThunk(
@@ -35,11 +51,12 @@ export const createDoctor = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 const initialState = {
   doctors: [],
+  doctor: null,
   isLoading: false,
   isError: null,
 };
@@ -70,6 +87,19 @@ const doctorSlice = createSlice({
       })
       .addCase(createDoctor.rejected, (state, action) => {
         state.isLoading = false;
+        state.isError = action.payload;
+      })
+      // ==============Doctor By Id============
+      .addCase(fetchDoctorsById.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchDoctorsById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.doctor = action.payload;
+      })
+      .addCase(fetchDoctorsById.rejected, (state, action) => {
+        state.isLoading = false;
+        state.doctor = null;
         state.isError = action.payload;
       });
   },

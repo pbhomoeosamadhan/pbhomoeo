@@ -3,6 +3,7 @@ const Patient = require("../model/patientModel");
 const createNewPatient = async (req, res) => {
   try {
     const {
+      patientChember,
       patientSerial,
       patientName,
       patientAge,
@@ -17,6 +18,7 @@ const createNewPatient = async (req, res) => {
     }
 
     const patient = new Patient({
+      patientChember,
       patientSerial,
       patientName,
       patientMobile,
@@ -45,12 +47,31 @@ const getAllPatient = async (req, res) => {
     });
   }
 };
+const getAllPatientByChamId = async (req, res) => {
+  try {
+    const patients = await Patient.find({
+      patientChember: req.params.chamId,
+    }).sort({ patientSerial: -1 }); // latest first
+
+    res.status(200).json(patients);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch patients",
+      error: error.message,
+    });
+  }
+};
 const getNextId = async (req, res) => {
   try {
-    const lastPatient = await Patient.findOne().sort({ patientSerial: -1 });
-
+    const { chamId } = req.params;
+    console.log(chamId);
+    const lastPatient = await Patient.findOne({ patientChember: chamId }).sort({
+      patientSerial: -1,
+    });
+    console.log(lastPatient);
     const nextId = lastPatient ? lastPatient.patientSerial + 1 : 20260001;
-
+    console.log(nextId);
     res.status(200).json({ nextId });
   } catch (error) {
     res.status(500).json({
@@ -114,7 +135,7 @@ const deleteVisit = async (req, res) => {
     }
 
     const visitIndex = patient.visits.findIndex(
-      (v) => v._id.toString() === visitId
+      (v) => v._id.toString() === visitId,
     );
 
     if (visitIndex === -1) {
@@ -137,4 +158,5 @@ module.exports = {
   updatePatient,
   addVisit,
   deleteVisit,
+  getAllPatientByChamId,
 };

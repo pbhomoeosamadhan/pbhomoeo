@@ -8,15 +8,26 @@ export const fetchPatients = createAsyncThunk(
   async () => {
     const res = await fetch(`${BASE_URL}/patients`);
     return res.json();
-  }
+  },
+);
+// Existing thunks
+export const fetchPatientsByChember = createAsyncThunk(
+  "patients/fetchPatientsByChember",
+  async (chamId) => {
+    console.log(chamId);
+    const res = await fetch(`${BASE_URL}/patients/${chamId}`);
+    return res.json();
+  },
 );
 
 export const fetchNextId = createAsyncThunk(
   "patients/fetchNextId",
-  async () => {
-    const res = await fetch(`${BASE_URL}/patients/id`);
-    return res.json();
-  }
+  async (chamId) => {
+    const res = await fetch(`${BASE_URL}/patients/next/${chamId}`);
+    const data = await res.json(); // ⭐ এইটা missing ছিল
+
+    return data.nextId; // ⭐ এখন ঠিক
+  },
 );
 
 export const createPatient = createAsyncThunk(
@@ -28,7 +39,7 @@ export const createPatient = createAsyncThunk(
       body: JSON.stringify(newPatient),
     });
     return res.json();
-  }
+  },
 );
 
 // ✅ New thunk to update patient
@@ -49,7 +60,7 @@ export const updatePatient = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 // New thunk to add a visit
@@ -70,7 +81,7 @@ export const addVisit = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 export const deleteVisit = createAsyncThunk(
@@ -81,7 +92,7 @@ export const deleteVisit = createAsyncThunk(
         `${BASE_URL}/patients/${patientId}/visits/${visitId}`,
         {
           method: "DELETE",
-        }
+        },
       );
       if (!res.ok) {
         const error = await res.json();
@@ -91,7 +102,7 @@ export const deleteVisit = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 const initialState = {
@@ -119,6 +130,18 @@ const patientSlice = createSlice({
         state.isLoading = false;
         state.isError = action.error.message;
       })
+      // fetchPatientsById
+      .addCase(fetchPatientsByChember.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchPatientsByChember.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.patients = action.payload;
+      })
+      .addCase(fetchPatientsByChember.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = action.error.message;
+      })
 
       // fetchNextId
       .addCase(fetchNextId.pending, (state) => {
@@ -126,7 +149,7 @@ const patientSlice = createSlice({
       })
       .addCase(fetchNextId.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.nextId = action.payload.nextId;
+        state.nextId = action.payload;
       })
       .addCase(fetchNextId.rejected, (state, action) => {
         state.isLoading = false;
@@ -153,7 +176,7 @@ const patientSlice = createSlice({
       .addCase(updatePatient.fulfilled, (state, action) => {
         state.isLoading = false;
         const index = state.patients.findIndex(
-          (p) => p._id === action.payload._id
+          (p) => p._id === action.payload._id,
         );
         if (index !== -1) state.patients[index] = action.payload;
       })
@@ -168,7 +191,7 @@ const patientSlice = createSlice({
       })
       .addCase(addVisit.fulfilled, (state, action) => {
         const patient = state.patients.find(
-          (p) => p._id === action.payload._id
+          (p) => p._id === action.payload._id,
         );
         if (patient) {
           patient.visits = action.payload.visits;
@@ -177,11 +200,11 @@ const patientSlice = createSlice({
       .addCase(addVisit.rejected, (state, action) => {
         state.isError = action.payload; // Use payload from rejectWithValue
       })
-      
+
       // deleteVisit
       .addCase(deleteVisit.fulfilled, (state, action) => {
         const patient = state.patients.find(
-          (p) => p._id === action.payload._id
+          (p) => p._id === action.payload._id,
         );
         if (patient) {
           patient.visits = action.payload.visits;

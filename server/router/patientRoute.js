@@ -6,12 +6,14 @@ const {
   updatePatient,
   addVisit,
   deleteVisit,
+  getAllPatientByChamId,
 } = require("../controller/patientController");
 
 const router = express.Router();
 
 router.get("/", getAllPatient);
-router.get("/id", getNextId);
+router.get("/:chamId", getAllPatientByChamId);
+router.get("/next/:chamId", getNextId);
 router.post("/", createNewPatient);
 router.put("/:id", updatePatient);
 router.post("/:id/visits", addVisit);

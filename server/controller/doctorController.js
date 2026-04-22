@@ -53,5 +53,13 @@ const getDoctor = async (req, res) => {
     console.error(error);
   }
 };
+const getDoctorById = async (req, res) => {
+  try {
+    const doctor = await Doctor.findById(req.params.id);
+    res.status(200).json(doctor);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-module.exports = { getDoctor, createDoctor };
+module.exports = { getDoctor, createDoctor, getDoctorById };

@@ -16,7 +16,7 @@ import {
   createCatagory,
   updateCatagory,
 } from "../store/slice/catagorySlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const TABS = ["Basic Info", "Symptoms", "History & Condition"];
 
@@ -24,7 +24,7 @@ const PatientForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(0);
-
+  const { chamId } = useParams();
   const { nextId, isLoading } = useSelector((state) => state.patient);
   const { list: categoryList = [] } = useSelector((state) => state.catagory);
 
@@ -37,6 +37,7 @@ const PatientForm = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
+      patientChember: chamId,
       patientSerial: "",
       patientName: "",
       patientAge: "",
@@ -66,14 +67,14 @@ const PatientForm = () => {
 
   const selectedCategory = useMemo(
     () => categoryList.find((c) => c.catagoryName === selectedCategoryName),
-    [categoryList, selectedCategoryName]
+    [categoryList, selectedCategoryName],
   );
 
   useEffect(() => {
-    dispatch(fetchNextId());
+    dispatch(fetchNextId(chamId));
     dispatch(fetchCatagory());
-  }, [dispatch]);
-
+  }, [dispatch, chamId]);
+  console.log("Next ID is coming...", nextId);
   useEffect(() => {
     if (nextId) {
       setValue("patientSerial", nextId);
@@ -83,7 +84,7 @@ const PatientForm = () => {
   const handleAddCategory = async () => {
     if (!categoryInput.trim()) return;
     const res = await dispatch(
-      createCatagory({ catagoryName: categoryInput, subCatagory: [] })
+      createCatagory({ catagoryName: categoryInput, subCatagory: [] }),
     );
     if (res.payload) {
       setValue("visits[0].symtoms.symtomsName", res.payload.catagoryName);
@@ -102,7 +103,7 @@ const PatientForm = () => {
       updateCatagory({
         id: selectedCategory._id,
         subCatagory: updatedSubCategories,
-      })
+      }),
     );
     append({ subSymtomsName: subCategoryInput });
     setSubCategoryInput("");
@@ -111,7 +112,7 @@ const PatientForm = () => {
   const onSubmit = async (data) => {
     const res = await dispatch(createPatient(data));
     if (res.meta.requestStatus === "fulfilled") {
-      navigate("/patients");
+      navigate(`/${chamId}/patients`);
     } else {
       // Handle error
     }
@@ -255,7 +256,7 @@ const PatientForm = () => {
                   </button>
                   {subCategoryInput &&
                     !selectedCategory.subCatagory.some(
-                      (s) => s.subCatagoryName === subCategoryInput
+                      (s) => s.subCatagoryName === subCategoryInput,
                     ) && (
                       <button
                         type="button"
