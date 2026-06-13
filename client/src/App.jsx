@@ -14,11 +14,11 @@ function App() {
       <Route path="/" element={<Dashboard />} />
       <Route path="/doctors" element={<Doctors />} />
       <Route path="/categories" element={<Categories />} />
-      <Route path="/accounting" element={<Accounting />} />
       <Route path="/:chamId" element={<Home />}>
         <Route path="patients" element={<Patients />} />
         <Route path="patients/form" element={<PatientForm />} />
         <Route path="patients/:patientSerialNumber" element={<Serial />} />
+        <Route path="accounting" element={<Accounting />} />
       </Route>
     </Routes>
   );

@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const accountingSchema = new mongoose.Schema({
+  doctor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "doctor",
+    required: true,
+  },
   date: {
     type: Date,
     required: true,

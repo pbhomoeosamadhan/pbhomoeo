@@ -15,6 +15,15 @@ const options = [
     iconColor: "text-blue-500",
     bgColor: "bg-blue-50",
   },
+  {
+      path: "accounting",
+      title: "Accounts",
+      icon: <MdAttachMoney />,
+      description: "Handle billing and financial records",
+      color: "from-green-500 to-emerald-400",
+      iconColor: "text-green-500",
+      bgColor: "bg-green-50",
+    },
   // {
   //   path: "doctors",
   //   title: "Doctors",
