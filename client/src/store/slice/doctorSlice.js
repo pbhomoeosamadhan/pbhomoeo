@@ -7,7 +7,6 @@ export const fetchDoctors = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await fetch(`${BASE_URL}/doctors`);
-      console.log(res);
       if (!res.ok) {
         const error = await res.json();
         return rejectWithValue(error.message);
@@ -22,7 +21,6 @@ export const fetchDoctorsById = createAsyncThunk(
   "doctors/fetchDoctorsById",
   async (id, { rejectWithValue }) => {
     try {
-      console.log(id);
       const res = await fetch(`${BASE_URL}/doctors/${id}`);
       if (!res.ok) {
         const error = await res.json();
@@ -70,10 +68,9 @@ const doctorSlice = createSlice({
     builder
       .addCase(fetchDoctors.pending, (state) => {
         state.isLoading = true;
-        console.log("Fetching doctors...");
+        
       })
       .addCase(fetchDoctors.fulfilled, (state, action) => {
-        console.log("Doctors fetched successfully:", action.payload);
         state.isLoading = false;
         state.doctors = action.payload;
       })

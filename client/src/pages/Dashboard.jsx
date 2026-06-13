@@ -13,7 +13,7 @@ const Dashboard = () => {
   useEffect(() => {
     dispatch(fetchDoctors());
   }, [dispatch]);
-  console.log("Doctors", doctors);
+  
   const options = [
     {
       path: "doctors",

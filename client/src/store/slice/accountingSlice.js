@@ -27,7 +27,7 @@ export const createTransaction = createAsyncThunk(
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newTransaction),
       });
-      console.log(res);
+      
       if (!res.ok) {
         const error = await res.json();
         return rejectWithValue(error.message);
