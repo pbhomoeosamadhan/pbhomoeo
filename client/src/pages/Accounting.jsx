@@ -16,7 +16,7 @@ const Accounting = () => {
   const dispatch = useDispatch();
   const { transactions, isLoading } = useSelector((state) => state.accounting);
   
-const {doctorId}=useParam();
+const {chamId}=useParam();
   /* =======================
       FILTER STATES
   ======================= */
@@ -30,7 +30,7 @@ const {doctorId}=useParam();
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
       date: new Date().toISOString().split("T")[0],
-      doctor: doctorId,
+      doctor: chamId,
       type: "income",
     },
   });
