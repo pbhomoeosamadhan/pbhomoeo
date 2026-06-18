@@ -1,5 +1,6 @@
 
 import { useForm } from "react-hook-form";
+import {userParam} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchTransactions,
@@ -14,6 +15,7 @@ import { useEffect, useMemo, useState } from "react";
 const Accounting = () => {
   const dispatch = useDispatch();
   const { transactions, isLoading } = useSelector((state) => state.accounting);
+  
 const {doctorId}=useParam();
   /* =======================
       FILTER STATES
@@ -28,6 +30,7 @@ const {doctorId}=useParam();
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
       date: new Date().toISOString().split("T")[0],
+      doctor: doctorId,
       type: "income",
     },
   });
