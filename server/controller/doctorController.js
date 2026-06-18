@@ -48,6 +48,7 @@ const createDoctor = async (req, res) => {
 const getDoctor = async (req, res) => {
   try {
     const getAllDoctor = await Doctor.find();
+    
     res.status(200).json(getAllDoctor);
   } catch (error) {
     console.error(error);

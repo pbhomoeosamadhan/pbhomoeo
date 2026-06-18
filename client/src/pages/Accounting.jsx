@@ -14,7 +14,7 @@ import { useEffect, useMemo, useState } from "react";
 const Accounting = () => {
   const dispatch = useDispatch();
   const { transactions, isLoading } = useSelector((state) => state.accounting);
-
+const {doctorId}=useParam();
   /* =======================
       FILTER STATES
   ======================= */
