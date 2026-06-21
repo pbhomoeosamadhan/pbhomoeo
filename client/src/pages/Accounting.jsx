@@ -18,9 +18,9 @@ import { useEffect, useMemo, useState } from "react";
 const Accounting = () => {
   const dispatch = useDispatch();
   const { transactions, isLoading } = useSelector((state) => state.accounting);
-  
+  console.log("Transactions from Redux:", transactions); // লগ করা হচ্ছে
 const {chamId}=useParams();
-console.log("chamId:", chamId); // chamId লগ করা হচ্ছে
+
   /* =======================
       FILTER STATES
   ======================= */

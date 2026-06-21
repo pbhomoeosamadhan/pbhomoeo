@@ -11,7 +11,7 @@ const getTransactions = async (req, res) => {
 const getChambTransactions = async (req, res) => {
   try {
     const { chamId } = req.params;
-    const transactions = await Accounting.findOne({ doctor: chamId }).sort({ date: -1 });
+    const transactions = await Accounting.find({ doctor: chamId }).sort({ date: -1 });
     res.status(200).json(transactions);
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });

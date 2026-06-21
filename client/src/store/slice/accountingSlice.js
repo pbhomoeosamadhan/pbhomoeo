@@ -29,8 +29,7 @@ export const fetchChambTransactions = createAsyncThunk(
         const error = await res.json();
         return rejectWithValue(error.message);
       }
-      console.log("Fetch transactions data:", await res.json()); // লগ করা হচ্ছে
-      return res.json();
+      return await  res.json();
     } catch (error) {
       return rejectWithValue(error.message);
     }
