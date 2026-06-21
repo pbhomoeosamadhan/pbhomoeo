@@ -12,6 +12,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />
+      <Route path="/accounting" element={<Accounting />} />
       <Route path="/doctors" element={<Doctors />} />
       <Route path="/categories" element={<Categories />} />
       <Route path="/:chamId" element={<Home />}>

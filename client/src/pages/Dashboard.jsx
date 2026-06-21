@@ -33,6 +33,15 @@ const Dashboard = () => {
       iconColor: "text-pink-500",
       bgColor: "bg-pink-50",
     },
+     {
+      path: "accounting",
+      title: "Accounts",
+      icon: <MdAttachMoney />,
+      description: "Handle billing and financial records",
+      color: "from-green-500 to-emerald-400",
+      iconColor: "text-green-500",
+      bgColor: "bg-green-50",
+    },
     
   ];
 

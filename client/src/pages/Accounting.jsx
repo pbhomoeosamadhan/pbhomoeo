@@ -6,19 +6,23 @@ import { useForm } from "react-hook-form";
 import {useParams} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  fetchTransactions,
   fetchChambTransactions,
   createTransaction,
   deleteTransaction,
 } from "../store/slice/accountingSlice";
+import {fetchDoctors} from "../store/slice/doctorSlice";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useMemo, useState } from "react";
 
+
 const Accounting = () => {
   const dispatch = useDispatch();
   const { transactions, isLoading } = useSelector((state) => state.accounting);
-  console.log("Transactions from Redux:", transactions); // লগ করা হচ্ছে
+  const { doctors } = useSelector((state) => state.doctor);
+  console.log("Doctor data in Accounting.jsx:", doctors); // লগ করা হচ্ছে
 const {chamId}=useParams();
 
   /* =======================
@@ -43,6 +47,11 @@ const {chamId}=useParams();
       FETCH DATA
   ======================= */
   useEffect(() => {
+    if(!chamId){
+      dispatch(fetchTransactions());
+      dispatch(fetchDoctors());
+      return;
+    }
     dispatch(fetchChambTransactions(chamId));
   }, [dispatch]);
 
@@ -84,7 +93,8 @@ const {chamId}=useParams();
       return true;
     });
   }, [transactions, filter, fromDate, toDate]);
-
+console.log("Filtered Transactions:", filteredTransactions); // লগ করা হচ্ছে
+console.log("Doctors List:", doctors); // লগ করা হচ্ছে
   /* =======================
       SUMMARY (FILTERED)
   ======================= */
@@ -207,7 +217,8 @@ const {chamId}=useParams();
 
           <table className="min-w-full">
             <thead>
-              <tr className="border-b">
+              <tr className="border-b text-left">
+                <th>Chamber</th>
                 <th>Date</th>
                 <th>Description</th>
                 <th>Type</th>
@@ -216,8 +227,11 @@ const {chamId}=useParams();
               </tr>
             </thead>
             <tbody>
-              {filteredTransactions.map((t) => (
+              {filteredTransactions.map((t) =>{ 
+                 const doctor = doctors.find((d) => d._id === t.doctor);
+               return (
                 <tr key={t._id} className="border-b">
+                  <td>{doctor ? doctor.medicalName : "Unknown"}</td>
                   <td>{new Date(t.date).toLocaleDateString()}</td>
                   <td>{t.description}</td>
                   <td>
@@ -240,7 +254,7 @@ const {chamId}=useParams();
                     </button>
                   </td>
                 </tr>
-              ))}
+              )})}
             </tbody>
           </table>
         </div>
