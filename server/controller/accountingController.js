@@ -8,6 +8,15 @@ const getTransactions = async (req, res) => {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
+const getChambTransactions = async (req, res) => {
+  try {
+    const { chamId } = req.params;
+    const transactions = await Accounting.findOne({ doctor: chamId }).sort({ date: -1 });
+    res.status(200).json(transactions);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
 
 const createTransaction = async (req, res) => {
   try {
@@ -44,6 +53,7 @@ const deleteTransaction = async (req, res) => {
 
 module.exports = {
   getTransactions,
+  getChambTransactions,
   createTransaction,
   deleteTransaction,
 };
