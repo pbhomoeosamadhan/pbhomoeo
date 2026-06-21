@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import {useParams} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchTransactions,
+  fetchChambTransactions,
   createTransaction,
   deleteTransaction,
 } from "../store/slice/accountingSlice";
@@ -43,7 +43,7 @@ console.log("chamId:", chamId); // chamId লগ করা হচ্ছে
       FETCH DATA
   ======================= */
   useEffect(() => {
-    dispatch(fetchTransactions());
+    dispatch(fetchChambTransactions(chamId));
   }, [dispatch]);
 
   /* =======================

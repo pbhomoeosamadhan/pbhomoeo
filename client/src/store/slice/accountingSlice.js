@@ -19,6 +19,23 @@ export const fetchTransactions = createAsyncThunk(
     }
   }
 );
+export const fetchChambTransactions = createAsyncThunk(
+  "accounting/fetchChambTransactions",
+  async (chamId, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${BASE_URL}/accounting/${chamId}`);
+      console.log("Fetch transactions response:", res); // লগ করা হচ্ছে
+      if (!res.ok) {
+        const error = await res.json();
+        return rejectWithValue(error.message);
+      }
+      console.log("Fetch transactions data:", await res.json()); // লগ করা হচ্ছে
+      return res.json();
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 export const createTransaction = createAsyncThunk(
   "accounting/createTransaction",
@@ -98,6 +115,17 @@ const accountingSlice = createSlice({
         state.transactions = state.transactions.filter(
           (t) => t._id !== action.payload
         );
+      })
+      .addCase(fetchChambTransactions.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchChambTransactions.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.transactions = action.payload;
+      })
+      .addCase(fetchChambTransactions.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = action.payload;
       });
   },
 });
