@@ -2,14 +2,14 @@
 const mongoose = require("mongoose");
 
 const MONGODB_URI = process.env.MONGODB_URI;
-
+console.log("MongoDB URI from environment variable:", MONGODB_URI);
 if (!MONGODB_URI) {
   throw new Error("Please define the MONGODB_URI environment variable");
 }
 
 // global ক্যাশ ব্যবহার করা হচ্ছে যাতে প্রতি রিকোয়েস্টে নতুন কানেকশন তৈরি না হয়
 let cached = global.mongoose;
-
+console.log("Cached Mongoose Connection:", cached);
 if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }

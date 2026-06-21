@@ -1,4 +1,7 @@
 
+
+
+
 import { useForm } from "react-hook-form";
 import {useParams} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +19,8 @@ const Accounting = () => {
   const dispatch = useDispatch();
   const { transactions, isLoading } = useSelector((state) => state.accounting);
   
-const {chamId}=useParam();
+const {chamId}=useParams();
+console.log("chamId:", chamId); // chamId লগ করা হচ্ছে
   /* =======================
       FILTER STATES
   ======================= */

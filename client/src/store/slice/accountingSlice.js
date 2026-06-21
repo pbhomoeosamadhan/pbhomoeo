@@ -22,6 +22,7 @@ export const createTransaction = createAsyncThunk(
   "accounting/createTransaction",
   async (newTransaction, { rejectWithValue }) => {
     try {
+      console.log("Creating transaction:", newTransaction); // লগ করা হচ্ছে
       const res = await fetch(`${BASE_URL}/accounting`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
