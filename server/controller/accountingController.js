@@ -11,14 +11,15 @@ const getTransactions = async (req, res) => {
 
 const createTransaction = async (req, res) => {
   try {
-    const { date, description, type, amount } = req.body;
+    const { date,doctor, description, type, amount } = req.body;
 
-    if (!date || !description || !type || !amount) {
+    if (!date ||!doctor || !description || !type || !amount) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
     const transaction = new Accounting({
       date,
+      doctor,
       description,
       type,
       amount,

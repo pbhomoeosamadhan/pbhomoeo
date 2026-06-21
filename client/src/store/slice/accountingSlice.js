@@ -7,10 +7,12 @@ export const fetchTransactions = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const res = await fetch(`${BASE_URL}/accounting`);
+      console.log("Fetch transactions response:", res); // লগ করা হচ্ছে
       if (!res.ok) {
         const error = await res.json();
         return rejectWithValue(error.message);
       }
+      console.log("Fetch transactions data:", await res.json()); // লগ করা হচ্ছে
       return res.json();
     } catch (error) {
       return rejectWithValue(error.message);
